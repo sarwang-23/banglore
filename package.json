@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "esbuild app.js --bundle --outfile=bundle.js --format=esm --minify",
+    "build": "node build.js",
     "dev": "node dev-server.js",
     "serve": "node dev-server.js"
   },
