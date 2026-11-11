@@ -1284,6 +1284,33 @@ a {
   line-height: 1.4;
 }
 
+.alt-comparison-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.alt-emiss-badge {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--color-forest);
+  background: var(--surface-sage);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.alt-emiss-badge strong {
+  font-weight: 700;
+}
+
+.alt-orig-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
 .alt-metrics {
   text-align: right;
   display: flex;

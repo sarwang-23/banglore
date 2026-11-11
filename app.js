@@ -367,6 +367,15 @@ function bindEvents() {
     state.destination = e.target.value || "Destination";
   });
 
+  // Mode Dropdown binding
+  if (elements.modeSelect) {
+    elements.modeSelect.addEventListener('change', (e) => {
+      state.mode = e.target.value;
+      syncTransportCards();
+      if (state.isCalculated) calculateAndRender(true);
+    });
+  }
+
   // Distance bindings
   elements.distanceInput.addEventListener('input', (e) => {
     const val = Math.max(1, Number(e.target.value) || 1);
@@ -658,10 +667,14 @@ function renderAlternatives(alternatives, originalPerPerson) {
           ${alt.isGreener ? '<span class="alt-greener-tag">Greener Alternative</span>' : ''}
         </div>
         <div class="alt-note" title="${alt.notes}">${alt.notes}</div>
+        <div class="alt-comparison-row">
+          <span class="alt-emiss-badge">Alternative: <strong>${alt.altPerPerson.toFixed(2)} kg CO₂e</strong></span>
+          <span class="alt-orig-badge">Original: ${originalPerPerson.toFixed(2)} kg CO₂e</span>
+        </div>
       </div>
       <div class="alt-metrics">
         <div class="alt-pct">-${alt.pctReduction}%</div>
-        <div class="alt-saved">Saves <strong>${alt.savedPerPerson.toFixed(2)} kg</strong></div>
+        <div class="alt-saved">Saves <strong>${alt.savedPerPerson.toFixed(2)} kg CO₂e</strong></div>
       </div>
     `;
     elements.alternativesContainer.appendChild(card);
