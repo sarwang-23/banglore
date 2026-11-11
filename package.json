@@ -1,0 +1,17 @@
+{
+  "name": "carbonsynq-bts2026",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild app.js --bundle --outfile=bundle.js --format=esm --minify",
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "canvas-confetti": "^1.9.4",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

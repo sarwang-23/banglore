@@ -1,0 +1,489 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarbonSynq — The Future of Every Journey | BTS 2026</title>
+  <meta name="description" content="Discover the carbon impact behind everyday mobility. CarbonSynq at Bangalore Tech Summit 2026.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<!-- ══════════ NAV ══════════ -->
+<header class="nav">
+  <div class="nav__inner">
+    <div class="nav__brand">
+      <div class="nav__glyph">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" stroke="#245B45" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M12 7L7 10V15L12 18L17 15V10L12 7Z" fill="#E8F0E9" stroke="#245B45" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="12" cy="12" r="1.5" fill="#245B45"/>
+        </svg>
+      </div>
+      <div class="nav__id">
+        <div class="nav__name">CarbonSynq<span class="nav__period">.</span></div>
+        <div class="nav__sub">Climate Intelligence</div>
+      </div>
+    </div>
+    <div class="nav__summit-tag">
+      <span class="nav__live-dot"></span>
+      Bangalore Tech Summit 2026
+    </div>
+    <div class="nav__links">
+      <button id="open-methodology-btn" class="nav__link">Methodology</button>
+      <button id="quick-reset-header-btn" class="nav__link">Reset</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero">
+  <div class="hero__editorial">
+    <div class="hero__kicker">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Climate Intelligence Platform &middot; BTS 2026
+    </div>
+    <h1 class="hero__headline">EVERY JOURNEY<br><em>LEAVES A STORY.</em></h1>
+    <p class="hero__body">Discover the carbon footprint behind everyday mobility.<br>Explore smarter alternatives. Make your next journey count.</p>
+    <a href="#configure" class="hero__begin">
+      Explore Your Carbon Impact
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+    </a>
+  </div>
+
+  <div class="hero__network-wrap">
+    <!-- Abstract Bangalore Mobility Network -->
+    <svg class="hero__svg" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg" aria-label="Bangalore mobility network visualization">
+      <!-- Route lines -->
+      <path class="rline" d="M55,78 C120,80 190,120 265,195"/>
+      <path class="rline" d="M418,105 C380,130 340,165 265,195"/>
+      <path class="rline" d="M265,195 C250,235 240,265 225,295"/>
+      <path class="rline rline--faint" d="M265,195 C285,250 300,300 310,350"/>
+      <path class="rline rline--faint" d="M418,105 C435,145 445,210 440,270"/>
+      <path class="rline" d="M225,295 C240,310 265,330 290,348"/>
+      <path class="rline rline--faint" d="M165,100 C195,140 230,165 265,195"/>
+
+      <!-- Route IDs for animateMotion -->
+      <path id="rp1" d="M55,78 C120,80 190,120 265,195" fill="none"/>
+      <path id="rp2" d="M418,105 C380,130 340,165 265,195" fill="none"/>
+      <path id="rp3" d="M265,195 C250,235 240,265 225,295 C240,310 265,330 290,348" fill="none"/>
+      <path id="rp4" d="M418,105 C435,145 445,210 440,270" fill="none"/>
+
+      <!-- Animated vehicle dots -->
+      <circle class="vdot" r="4.5" fill="#B79A68">
+        <animateMotion dur="7s" repeatCount="indefinite" path="M55,78 C120,80 190,120 265,195"/>
+      </circle>
+      <circle class="vdot" r="4" fill="#245B45">
+        <animateMotion dur="5.5s" repeatCount="indefinite" begin="1.8s" path="M418,105 C380,130 340,165 265,195"/>
+      </circle>
+      <circle class="vdot" r="3.5" fill="#739B91">
+        <animateMotion dur="8s" repeatCount="indefinite" begin="0.5s" path="M265,195 C250,235 240,265 225,295 C240,310 265,330 290,348"/>
+      </circle>
+      <circle class="vdot" r="3" fill="#B79A68" opacity="0.7">
+        <animateMotion dur="6s" repeatCount="indefinite" begin="3s" path="M418,105 C435,145 445,210 440,270"/>
+      </circle>
+
+      <!-- City nodes: smaller -->
+      <circle class="cnode cnode--sm" cx="55" cy="78" r="5"/>
+      <circle class="cnode cnode--sm" cx="418" cy="105" r="5"/>
+      <circle class="cnode cnode--sm" cx="165" cy="100" r="4"/>
+      <circle class="cnode cnode--sm" cx="225" cy="295" r="4"/>
+      <circle class="cnode cnode--sm" cx="290" cy="348" r="4"/>
+      <circle class="cnode cnode--sm" cx="440" cy="270" r="4"/>
+
+      <!-- BTS Palace Grounds: highlighted hero node -->
+      <circle cx="265" cy="195" r="22" fill="none" stroke="#245B45" stroke-width="1.5" opacity="0.2">
+        <animate attributeName="r" values="16;26;16" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.3;0;0.3" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="265" cy="195" r="12" fill="none" stroke="#245B45" stroke-width="1.5" opacity="0.4"/>
+      <circle cx="265" cy="195" r="6" fill="#245B45"/>
+
+      <!-- Labels -->
+      <text x="30" y="68" class="nlabel">BLR Airport</text>
+      <text x="398" y="96" class="nlabel" text-anchor="end">Whitefield</text>
+      <text x="150" y="92" class="nlabel">Yelahanka</text>
+      <text x="210" y="318" class="nlabel">Koramangala</text>
+      <text x="275" y="366" class="nlabel">Electronic City</text>
+      <text x="265" y="184" class="nlabel nlabel--venue" text-anchor="middle">Palace Grounds</text>
+      <text x="265" y="216" class="nlabel nlabel--bts" text-anchor="middle">BTS 2026</text>
+    </svg>
+
+    <!-- Live data preview chip -->
+    <div class="hero__live-chip">
+      <span class="chip-dot"></span>
+      <span>6 summit corridors tracked</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ STAGE 01: CONFIGURE ══════════ -->
+<section id="configure" class="s01">
+  <div class="s01__inner">
+
+    <div class="stage-mark">
+      <span class="stage-mark__num">01</span>
+      <span class="stage-mark__label">Your Journey</span>
+    </div>
+    <h2 class="stage-title">Configure Your Route</h2>
+    <p class="stage-desc">Select your mode of transport, enter distance and calculate your personal carbon footprint.</p>
+
+    <!-- Summit presets -->
+    <div class="presets-row">
+      <span class="presets-row__label">Summit corridors</span>
+      <div class="presets-row__chips" id="preset-chips-container"></div>
+    </div>
+
+    <form id="calculator-form" novalidate>
+
+      <!-- Route -->
+      <div class="route-pair">
+        <div class="route-field">
+          <label class="fl" for="input-origin">
+            <span class="fl__num">1</span>Starting Location
+          </label>
+          <div class="fi-wrap">
+            <svg class="fi-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <input type="text" id="input-origin" class="fi" value="Kempegowda Int'l Airport (BLR)" placeholder="Your origin" required>
+          </div>
+        </div>
+        <div class="route-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="route-field">
+          <label class="fl" for="input-destination">
+            <span class="fl__num">2</span>Destination
+          </label>
+          <div class="fi-wrap">
+            <svg class="fi-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <input type="text" id="input-destination" class="fi" value="Bangalore Tech Summit (Palace Grounds)" placeholder="Summit venue" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transport mode -->
+      <div class="mode-section">
+        <div class="mode-section__head">
+          <label class="fl"><span class="fl__num">3</span>Mode of Transport</label>
+          <span class="mode-meta" id="mode-category-meta">Passenger Vehicle</span>
+        </div>
+        <select id="select-transport-mode" style="display:none" aria-label="Transport Mode">
+          <option value="Petrol Car">Petrol Car</option>
+          <option value="Diesel Car">Diesel Car</option>
+          <option value="Electric Car">Electric Car</option>
+          <option value="Two-Wheeler">Two-Wheeler</option>
+          <option value="Bus">Bus</option>
+          <option value="Metro / Train">Metro / Train</option>
+          <option value="Flight">Flight</option>
+          <option value="Walking / Cycling">Walking / Cycling</option>
+        </select>
+        <div class="mode-grid" id="transport-pill-grid" role="group" aria-label="Transport mode selection"></div>
+      </div>
+
+      <!-- Distance + Passengers -->
+      <div class="params-row">
+
+        <div class="param-col">
+          <div class="param-head">
+            <label class="fl" for="input-distance"><span class="fl__num">4</span>Travel Distance</label>
+            <span class="param-badge" id="distance-display-val">32 km</span>
+          </div>
+          <div class="param-stepper">
+            <button type="button" id="dist-minus-btn" class="stp-btn">-5</button>
+            <input type="number" id="input-distance" class="fi fi--center" min="1" max="5000" value="32" required>
+            <button type="button" id="dist-plus-btn" class="stp-btn">+5</button>
+          </div>
+          <input type="range" id="slider-distance" class="param-range" min="1" max="100" value="32" aria-label="Distance slider">
+          <div class="km-row">
+            <button type="button" class="km-btn" data-km="5">5 km</button>
+            <button type="button" class="km-btn" data-km="15">15 km</button>
+            <button type="button" class="km-btn km-btn--on" data-km="32">32 km</button>
+            <button type="button" class="km-btn" data-km="50">50 km</button>
+            <button type="button" class="km-btn" data-km="350">350 km</button>
+          </div>
+        </div>
+
+        <div class="param-col">
+          <div class="param-head">
+            <label class="fl" for="input-passengers"><span class="fl__num">5</span>Passengers</label>
+            <span class="param-badge" id="passenger-display-val">1 passenger</span>
+          </div>
+          <div class="param-stepper">
+            <button type="button" id="pass-minus-btn" class="stp-btn">&minus;</button>
+            <input type="number" id="input-passengers" class="fi fi--center" min="1" max="50" value="1" required>
+            <button type="button" id="pass-plus-btn" class="stp-btn">+</button>
+          </div>
+          <p class="param-hint" id="passenger-hint-text">Emissions shared equally across all occupants.</p>
+        </div>
+
+      </div>
+
+      <!-- Activity -->
+      <div class="activity-wrap">
+        <div class="activity-head">
+          <label class="fl" for="select-additional-activity"><span class="fl__num">6</span>Supplementary Activity</label>
+          <span class="opt-tag">Optional &middot; Scope 2/3</span>
+        </div>
+        <select id="select-additional-activity" class="fi fi--select">
+          <option value="None">None &mdash; transport emissions only</option>
+          <option value="Air Conditioning Usage">Air Conditioning Usage</option>
+          <option value="Electricity Consumption">Electricity Consumption</option>
+          <option value="Meat-Based Meal">Meat-Based Meal</option>
+          <option value="Shopping / Purchase">Shopping / Purchase</option>
+        </select>
+        <div id="dynamic-followup-container" class="followup hidden"></div>
+      </div>
+
+      <!-- Calculate CTA -->
+      <button type="submit" id="calculate-btn" class="calc-btn">
+        <span>Calculate Carbon Footprint</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+
+    </form>
+  </div>
+</section>
+
+<!-- ══════════ STAGE 02: IMPACT (dark) ══════════ -->
+<section id="impact-section" class="s02 hidden">
+  <div class="s02__inner">
+
+    <div class="stage-mark stage-mark--light">
+      <span class="stage-mark__num">02</span>
+      <span class="stage-mark__label">Your Carbon Impact</span>
+    </div>
+
+    <div class="impact-layout">
+
+      <!-- Left: THE BIG NUMBER -->
+      <div class="impact-left">
+        <div class="impact-eyebrow">Total Carbon Footprint</div>
+        <div class="impact-figure">
+          <span class="impact-num" id="total-footprint-value">0.00</span>
+          <span class="impact-unit">kg CO&#8322;e</span>
+        </div>
+        <div class="impact-context">per person &middot; this journey</div>
+        <div id="emission-status-tag" class="impact-status">Standard Urban Profile</div>
+
+        <!-- Equivalences -->
+        <div class="impact-equivs">
+          <div class="impact-equiv">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <span id="equiv-phone-text">~680 smartphone charges</span>
+          </div>
+          <div class="impact-equiv">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"><path d="M12 22v-9"/><path d="M7 13a5 5 0 0 1 10 0"/><path d="M9 13a3 3 0 0 1 6 0"/></svg>
+            <span id="equiv-tree-text">~3.0 tree-months sequestration</span>
+          </div>
+        </div>
+
+        <!-- Split bar -->
+        <div class="impact-split">
+          <div class="split-legend">
+            <span><span class="sdot sdot--w"></span><span id="split-journey-label">Transport 100%</span></span>
+            <span><span class="sdot sdot--g"></span><span id="split-activity-label">Activity 0%</span></span>
+          </div>
+          <div class="split-track">
+            <div class="split-seg split-seg--w" id="split-bar-journey" style="width:100%"></div>
+            <div class="split-seg split-seg--g" id="split-bar-activity" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Gauge + Telemetry -->
+      <div class="impact-right">
+
+        <!-- Circular gauge -->
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 200 200">
+            <circle class="gauge-track" cx="100" cy="100" r="82"/>
+            <circle class="gauge-arc" id="circle-progress-arc" cx="100" cy="100" r="82" style="stroke-dashoffset:325;stroke-dasharray:515.2"/>
+          </svg>
+          <div class="gauge-mid">
+            <div class="gauge-pct" id="circle-progress-pct">45%</div>
+            <div class="gauge-lbl">BTS Target</div>
+          </div>
+        </div>
+
+        <!-- Telemetry panels -->
+        <div class="telem-row">
+          <div class="telem-panel">
+            <div class="telem-panel__top">
+              <span class="telem-label">Journey</span>
+              <span class="telem-scope">Scope 3</span>
+            </div>
+            <div class="telem-num-line">
+              <span class="telem-num" id="journey-emissions-val">5.44</span>
+              <span class="telem-u">kg</span>
+            </div>
+            <div class="telem-detail" id="journey-details-text">Per person: <strong id="per-person-val">5.44 kg</strong></div>
+            <div class="telem-cite" id="journey-factor-pill">0.170 kg CO&#8322;e/veh-km</div>
+          </div>
+          <div class="telem-panel">
+            <div class="telem-panel__top">
+              <span class="telem-label">Activity</span>
+              <span class="telem-scope">Scope 2/3</span>
+            </div>
+            <div class="telem-num-line">
+              <span class="telem-num" id="activity-emissions-val">0.00</span>
+              <span class="telem-u">kg</span>
+            </div>
+            <div class="telem-detail" id="activity-details-text">None selected</div>
+            <div class="telem-cite" id="activity-factor-pill">0.00 kg CO&#8322;e</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════ STAGE 03: BETTER CHOICE ══════════ -->
+<section id="choices-section" class="s03 hidden">
+  <div class="s03__inner">
+
+    <div class="stage-mark">
+      <span class="stage-mark__num">03</span>
+      <span class="stage-mark__label">Your Better Choice</span>
+    </div>
+
+    <div class="choices-head">
+      <div>
+        <h2 class="choices-title">Greener Alternatives</h2>
+        <p class="choices-desc">The difference one mode change makes on this exact corridor.</p>
+      </div>
+      <span class="pathways-pill" id="alternatives-count-badge">3 Pathways</span>
+    </div>
+
+    <div class="alts-list" id="alternatives-container"></div>
+
+    <!-- Advisory -->
+    <div class="advisory">
+      <div class="advisory__head">
+        <div class="advisory__title-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#245B45" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span class="advisory__title">Sustainability Recommendation</span>
+        </div>
+        <div class="advisory__badge">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="#B79A68"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          BTS 2026 Climate Badge
+        </div>
+      </div>
+      <p class="advisory__text" id="recommendation-text">Single-occupant fossil fuel transit represents the highest Scope 3 intensity on this corridor. Transitioning to Namma Metro electric rapid transit would reduce travel carbon by up to 85%.</p>
+    </div>
+
+    <!-- Kiosk bar -->
+    <div class="kiosk-bar">
+      <button id="open-qr-modal-btn" class="kiosk-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Digital Pass
+      </button>
+      <button id="download-badge-btn" class="kiosk-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Save Badge
+      </button>
+      <button id="reset-next-visitor-btn" class="kiosk-btn kiosk-btn--prime">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Next Visitor
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <span><strong>CarbonSynq</strong> &middot; Bangalore Tech Summit 2026 Flagship Climate Experience</span>
+    <span>India CEA CO&#8322; Baseline v19 &middot; UK DEFRA/DESNZ 2024 &middot; BEE &middot; GHG Protocol Scope 3</span>
+  </div>
+</footer>
+
+<!-- ══════════ MODAL: METHODOLOGY ══════════ -->
+<div id="methodology-modal" class="moverlay hidden" role="dialog" aria-modal="true" aria-labelledby="mm-title">
+  <div class="mdialog">
+    <div class="mdialog__head">
+      <div>
+        <span class="mdialog__eyebrow">Enterprise Standards</span>
+        <h3 class="mdialog__title" id="mm-title">Methodology &amp; Emission Sources</h3>
+      </div>
+      <button id="close-methodology-btn" class="mdialog__x" aria-label="Close">&times;</button>
+    </div>
+    <div class="mdialog__body">
+      <p class="mdialog__intro">CarbonSynq computes GHG emissions compliant with recognized global standards, reporting in <strong>kg CO&#8322;e</strong> encompassing CO&#8322;, CH&#8324; and N&#8322;O global warming potentials per IPCC AR6.</p>
+      <h4 class="mdialog__sh">1. Transport Emission Factors</h4>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Mode</th><th>Factor</th><th>Unit</th><th>Standard</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Petrol Car</strong></td><td>0.170</td><td>kg CO&#8322;e/veh-km</td><td>ARAI/BEE &amp; UK DEFRA 2024</td></tr>
+            <tr><td><strong>Diesel Car</strong></td><td>0.175</td><td>kg CO&#8322;e/veh-km</td><td>ARAI/BEE &amp; UK DEFRA 2024</td></tr>
+            <tr><td><strong>Electric Car</strong></td><td>0.086</td><td>kg CO&#8322;e/veh-km</td><td>India CEA v19 (0.716 kg/kWh)</td></tr>
+            <tr><td><strong>Two-Wheeler</strong></td><td>0.045</td><td>kg CO&#8322;e/veh-km</td><td>ARAI Benchmarks &amp; DEFRA 2024</td></tr>
+            <tr><td><strong>Bus</strong></td><td>0.038</td><td>kg CO&#8322;e/pax-km</td><td>BMTC/TERI &amp; UK DEFRA 2024</td></tr>
+            <tr><td><strong>Metro / Train</strong></td><td>0.022</td><td>kg CO&#8322;e/pax-km</td><td>BMRCL Namma Metro</td></tr>
+            <tr><td><strong>Flight</strong></td><td>0.210</td><td>kg CO&#8322;e/pax-km</td><td>ICAO Calculator &amp; DEFRA 2024</td></tr>
+            <tr><td><strong>Walking / Cycling</strong></td><td>0.000</td><td>kg CO&#8322;e/km</td><td>IPCC Zero-Tailpipe Framework</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h4 class="mdialog__sh">2. Supplementary Activity Factors</h4>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Activity</th><th>Factor</th><th>Standard</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Air Conditioning</strong></td><td>0.860 kg/hr</td><td>BEE 3-Star 1.5T AC &times; CEA Grid</td></tr>
+            <tr><td><strong>Electricity</strong></td><td>0.716 kg/kWh</td><td>India CEA CO&#8322; Baseline Database v19</td></tr>
+            <tr><td><strong>Meat-Based Meal</strong></td><td>2.400 kg/meal</td><td>Poore &amp; Nemecek (Science 2018)/WRI</td></tr>
+            <tr><td><strong>Shopping (Apparel)</strong></td><td>8.500 kg/item</td><td>Carbon Trust &amp; Ellen MacArthur Foundation</td></tr>
+            <tr><td><strong>Shopping (Electronics)</strong></td><td>18.000 kg/item</td><td>ADEME Corporate Procurement LCA</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mdialog__note"><strong>Occupancy rule:</strong> Personal vehicles: per-capita = (Factor &times; Distance) / Passengers. Mass transit applies per passenger-km directly.</div>
+    </div>
+    <div class="mdialog__foot">
+      <button id="dismiss-methodology-btn" class="btn-primary btn--sm">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL: QR PASS ══════════ -->
+<div id="qr-modal" class="moverlay hidden" role="dialog" aria-modal="true" aria-labelledby="qm-title">
+  <div class="mdialog mdialog--narrow" style="text-align:center">
+    <div class="mdialog__head">
+      <div>
+        <span class="mdialog__eyebrow">Digital Certificate</span>
+        <h3 class="mdialog__title" id="qm-title">Summit Verification Pass</h3>
+      </div>
+      <button id="close-qr-btn" class="mdialog__x" aria-label="Close">&times;</button>
+    </div>
+    <div class="mdialog__body">
+      <p class="mdialog__intro">Scan to open your personal CarbonSynq audit report:</p>
+      <div class="qr-frame"><canvas id="qr-canvas"></canvas></div>
+      <div class="qr-summary">
+        <div class="qr-summary__top"><span>BANGALORE TECH SUMMIT 2026</span><span class="qr-verified">VERIFIED</span></div>
+        <div class="qr-row"><span>Carbon Impact:</span><strong class="green-mono" id="qr-total-metric">5.44 kg CO&#8322;e</strong></div>
+        <div class="qr-row"><span>Journey:</span><span id="qr-journey-metric">Airport &rarr; BTS (32 km)</span></div>
+        <div class="qr-row"><span>Best Alternative:</span><strong class="green-mono" id="qr-best-alt-metric">&mdash;</strong></div>
+      </div>
+      <div class="share-row">
+        <input type="text" id="share-url-input" class="fi fi--sm" readonly>
+        <button id="copy-share-url-btn" class="kiosk-btn">Copy</button>
+      </div>
+      <div id="copy-feedback-msg" class="copy-fb">Link copied &#10003;</div>
+    </div>
+    <div class="mdialog__foot">
+      <button id="dismiss-qr-btn" class="btn-primary btn--sm">Done</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="badge-export-canvas" width="1200" height="1500" style="display:none;"></canvas>
+<script type="module" src="./bundle.js"></script>
+</body>
+</html>
