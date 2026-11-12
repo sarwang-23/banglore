@@ -4,6 +4,7 @@ import {
   BANGALORE_PRESETS, 
   calculateTravelEmissions, 
   calculateActivityEmissions, 
+  calculateMultipleActivities,
   getAlternativeRecommendations, 
   generatePersonalizedRecommendation 
 } from './emission-data.js';
@@ -20,6 +21,56 @@ const TRANSPORT_ICONS = {
   'cycling': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5L8.5 11H12l2.5 3 3.5-2.5M12 11l2-4.5h3"/></svg>`
 };
 
+// Activity Specifications for Multi-Activity Support
+const ACTIVITY_SPECS = {
+  'Air Conditioning Usage': {
+    icon: '❄️',
+    label: 'Air Conditioning Usage',
+    subType: 'duration',
+    defaultVal: 4,
+    min: 1,
+    max: 24,
+    step: 1,
+    unit: 'hrs',
+    hint: 'BEE 3-Star 1.5T AC (1.2 kW) × India CEA Grid Factor (0.716 kg CO₂e/kWh)'
+  },
+  'Electricity Consumption': {
+    icon: '⚡',
+    label: 'Electricity Consumption',
+    subType: 'kwh',
+    defaultVal: 10,
+    min: 1,
+    max: 500,
+    step: 5,
+    unit: 'kWh',
+    hint: 'India CEA CO₂ Baseline v19 · 0.716 kg CO₂e / kWh'
+  },
+  'Meat-Based Meal': {
+    icon: '🥩',
+    label: 'Meat-Based Meal',
+    subType: 'meals',
+    defaultVal: 1,
+    min: 1,
+    max: 10,
+    step: 1,
+    unit: 'meal(s)',
+    hint: 'WRI / Poore & Nemecek Science LCA · 2.40 kg CO₂e / portion'
+  },
+  'Shopping / Purchase': {
+    icon: '🛍️',
+    label: 'Shopping / Purchase',
+    subType: 'category',
+    defaultVal: 'fast_fashion',
+    hint: 'Lifecycle embodied procurement carbon benchmark',
+    options: [
+      { label: 'Apparel / Textile Goods (~8.5 kg CO₂e)', value: 'fast_fashion' },
+      { label: 'Consumer Electronics & Hardware (~18.0 kg CO₂e)', value: 'electronics' },
+      { label: 'Packaged Consumables & Retail (~2.5 kg CO₂e)', value: 'groceries' },
+      { label: 'Leather & Luxury Goods (~32.0 kg CO₂e)', value: 'leather' }
+    ]
+  }
+};
+
 // Application State
 const state = {
   origin: "Kempegowda Int'l Airport (BLR)",
@@ -27,8 +78,7 @@ const state = {
   mode: "Petrol Car",
   distance: 32,
   passengers: 1,
-  activity: "None",
-  activityValue: null,
+  activities: {}, // Multi-activity map: { [activityKey]: value }
   cachedResults: null,
   isCalculated: false
 };
@@ -63,8 +113,8 @@ const elements = {
   passPlusBtn: document.getElementById('pass-plus-btn'),
   passengerHintText: document.getElementById('passenger-hint-text'),
 
-  // Activity
-  activitySelect: document.getElementById('select-additional-activity'),
+  // Activities (Multi-Select)
+  activityChipsContainer: document.getElementById('activity-chips-container'),
   followupContainer: document.getElementById('dynamic-followup-container'),
 
   // Calculate CTA
@@ -125,235 +175,183 @@ function init() {
   renderCorridorPresets();
   renderTransportCardsGrid();
   bindEvents();
-  updateFollowupInput();
+  bindActivityChips();
+  renderActiveFollowups();
   calculateAndRender(false);
 }
 
 /**
- * Render Quick Summit Presets
+ * Bind multi-activity toggle chips
  */
-function renderCorridorPresets() {
-  if (!elements.presetChipsContainer) return;
-  elements.presetChipsContainer.innerHTML = '';
-
-  BANGALORE_PRESETS.forEach(preset => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'preset-chip-btn';
-    btn.innerHTML = `
-      <span>${preset.name}</span>
-      <span class="preset-chip-dist">${preset.distance} km</span>
-    `;
-    btn.addEventListener('click', () => {
-      elements.originInput.value = preset.name;
-      elements.distanceInput.value = preset.distance;
-      elements.distanceSlider.value = Math.min(preset.distance, 100);
-      elements.modeSelect.value = preset.mode;
-      state.origin = preset.name;
-      state.distance = preset.distance;
-      state.mode = preset.mode;
-
-      updateKmButtonsActive(preset.distance);
-      syncTransportCards();
-      updateDistanceDisplays();
-      revealAndScrollToImpact();
-    });
-    elements.presetChipsContainer.appendChild(btn);
-  });
-}
-
-/**
- * Render 8-Grid Transport Selection Cards
- */
-function renderTransportCardsGrid() {
-  if (!elements.transportPillGrid) return;
-  elements.transportPillGrid.innerHTML = '';
-  const modes = Object.keys(EMISSION_FACTORS.transport);
-
-  modes.forEach(modeKey => {
-    const spec = EMISSION_FACTORS.transport[modeKey];
-    const iconSvg = TRANSPORT_ICONS[spec.iconKey] || '';
-
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = `mode-card-btn${modeKey === state.mode ? ' mode-card-btn--active' : ''}`;
-    btn.dataset.mode = modeKey;
-    btn.setAttribute('title', spec.description || modeKey);
-    btn.innerHTML = `
-      <div class="mode-card-icon">${iconSvg}</div>
-      <div class="mode-card-title">${modeKey}</div>
-      <div class="mode-card-rate">${spec.factor} ${spec.unit.includes('pax') ? 'kg/pax-km' : 'kg/veh-km'}</div>
-    `;
-
-    btn.addEventListener('click', () => {
-      state.mode = modeKey;
-      elements.modeSelect.value = modeKey;
-      syncTransportCards();
-      if (state.isCalculated) {
-        calculateAndRender(true);
+function bindActivityChips() {
+  if (!elements.activityChipsContainer) return;
+  const chips = elements.activityChipsContainer.querySelectorAll('.act-chip');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const actKey = chip.dataset.activity;
+      if (state.activities[actKey] !== undefined) {
+        // Toggle OFF
+        delete state.activities[actKey];
+        chip.classList.remove('act-chip--on');
+        const stateBadge = chip.querySelector('.act-chip__state');
+        if (stateBadge) stateBadge.textContent = '+';
+      } else {
+        // Toggle ON
+        const spec = ACTIVITY_SPECS[actKey];
+        state.activities[actKey] = spec ? spec.defaultVal : 1;
+        chip.classList.add('act-chip--on');
+        const stateBadge = chip.querySelector('.act-chip__state');
+        if (stateBadge) stateBadge.textContent = '✓';
       }
+      renderActiveFollowups();
+      calculateAndRender(false);
     });
-
-    elements.transportPillGrid.appendChild(btn);
   });
-}
-
-function syncTransportCards() {
-  const buttons = elements.transportPillGrid.querySelectorAll('.mode-card-btn');
-  buttons.forEach(btn => {
-    if (btn.dataset.mode === state.mode) {
-      btn.classList.add('mode-card-btn--active');
-    } else {
-      btn.classList.remove('mode-card-btn--active');
-    }
-  });
-
-  const spec = EMISSION_FACTORS.transport[state.mode];
-  if (elements.modeCategoryMeta) {
-    elements.modeCategoryMeta.textContent = spec ? spec.description : 'Urban Mobility';
-  }
-
-  if (elements.passengerHintText) {
-    if (spec && spec.type === 'per_vehicle_km') {
-      elements.passengerHintText.textContent = `Emissions for ${state.mode} are distributed equally across all ${state.passengers} passenger(s).`;
-    } else if (spec && spec.type === 'per_passenger_km') {
-      elements.passengerHintText.textContent = `Mass transit emissions are assessed on an individual passenger-km allocation.`;
-    } else {
-      elements.passengerHintText.textContent = `Active mobility produces zero direct Scope 1 and Scope 3 tailpipe emissions.`;
-    }
-  }
 }
 
 /**
- * Render single relevant follow-up input for selected activity
+ * Render dynamic follow-up cards for all active activities
  */
-function updateFollowupInput() {
-  const activityKey = elements.activitySelect.value;
-  state.activity = activityKey;
-
-  if (activityKey === 'None') {
+function renderActiveFollowups() {
+  if (!elements.followupContainer) return;
+  const activeKeys = Object.keys(state.activities);
+  
+  if (activeKeys.length === 0) {
     elements.followupContainer.innerHTML = '';
-    elements.followupContainer.classList.add('hidden');
-    state.activityValue = null;
-    if (state.isCalculated) calculateAndRender(false);
     return;
   }
 
-  const spec = EMISSION_FACTORS.activities[activityKey];
-  if (!spec) return;
+  elements.followupContainer.innerHTML = '';
 
-  elements.followupContainer.classList.remove('hidden');
+  activeKeys.forEach(actKey => {
+    const spec = ACTIVITY_SPECS[actKey];
+    if (!spec) return;
 
-  if (spec.subType === 'duration') {
-    // Air conditioning
-    state.activityValue = state.activityValue || spec.defaultVal;
-    elements.followupContainer.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <label for="input-ac-hours" class="fl" style="margin-bottom:0">HVAC Runtime Duration</label>
-        <span class="param-badge" id="ac-hours-badge">${state.activityValue} hrs</span>
+    const currentVal = state.activities[actKey];
+    const itemCalc = calculateActivityEmissions(actKey, currentVal);
+    const card = document.createElement('div');
+    card.className = 'act-card';
+
+    let controlHtml = '';
+    if (spec.subType === 'duration' || spec.subType === 'meals') {
+      controlHtml = `
+        <div class="param-stepper">
+          <button type="button" class="stp-btn act-minus-btn" data-act="${actKey}">-${spec.step}</button>
+          <input type="number" class="fi fi--center act-input-val" data-act="${actKey}" min="${spec.min}" max="${spec.max}" value="${currentVal}">
+          <button type="button" class="stp-btn act-plus-btn" data-act="${actKey}">+${spec.step}</button>
+        </div>
+      `;
+    } else if (spec.subType === 'kwh') {
+      controlHtml = `
+        <div class="param-stepper">
+          <button type="button" class="stp-btn act-minus-btn" data-act="${actKey}">-5</button>
+          <input type="number" class="fi fi--center act-input-val" data-act="${actKey}" min="${spec.min}" max="${spec.max}" value="${currentVal}">
+          <button type="button" class="stp-btn act-plus-btn" data-act="${actKey}">+5</button>
+        </div>
+      `;
+    } else if (spec.subType === 'category') {
+      const opts = spec.options.map(opt => `
+        <option value="${opt.value}" ${opt.value === currentVal ? 'selected' : ''}>${opt.label}</option>
+      `).join('');
+      controlHtml = `
+        <select class="fi fi--select act-select-val" data-act="${actKey}">
+          ${opts}
+        </select>
+      `;
+    }
+
+    card.innerHTML = `
+      <div class="act-card__head">
+        <div class="act-card__title">
+          <span>${spec.icon}</span>
+          <span>${spec.label}</span>
+        </div>
+        <div class="act-card__meta">
+          <span class="act-card__impact">+${itemCalc.emissions.toFixed(2)} kg CO₂e</span>
+          <button type="button" class="act-card__remove" data-act="${actKey}" title="Remove activity">&times;</button>
+        </div>
       </div>
-      <div class="param-stepper">
-        <button type="button" class="stp-btn" id="ac-minus">-1</button>
-        <input type="number" id="input-ac-hours" class="fi fi--center" min="1" max="24" value="${state.activityValue}">
-        <button type="button" class="stp-btn" id="ac-plus">+1</button>
+      <div class="act-card__body">
+        ${controlHtml}
+        <p class="act-card__hint">${spec.hint}</p>
       </div>
-      <p class="param-hint">BEE 3-Star 1.5T AC (1.2 kW) × India CEA Grid Factor (0.716 kg CO&#8322;e/kWh)</p>
     `;
 
-    const input = document.getElementById('input-ac-hours');
-    const badge = document.getElementById('ac-hours-badge');
-    const minus = document.getElementById('ac-minus');
-    const plus = document.getElementById('ac-plus');
+    elements.followupContainer.appendChild(card);
+  });
 
-    const updateAc = (val) => {
-      const clamped = Math.max(1, Math.min(24, Number(val) || 1));
-      state.activityValue = clamped;
-      input.value = clamped;
-      badge.textContent = `${clamped} hrs`;
-      if (state.isCalculated) calculateAndRender(false);
-    };
+  // Bind removal button
+  elements.followupContainer.querySelectorAll('.act-card__remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const actKey = btn.dataset.act;
+      delete state.activities[actKey];
+      if (elements.activityChipsContainer) {
+        const chip = elements.activityChipsContainer.querySelector(`.act-chip[data-activity="${actKey}"]`);
+        if (chip) {
+          chip.classList.remove('act-chip--on');
+          const stateBadge = chip.querySelector('.act-chip__state');
+          if (stateBadge) stateBadge.textContent = '+';
+        }
+      }
+      renderActiveFollowups();
+      calculateAndRender(false);
+    });
+  });
 
-    input.addEventListener('input', (e) => updateAc(e.target.value));
-    minus.addEventListener('click', () => updateAc(state.activityValue - 1));
-    plus.addEventListener('click', () => updateAc(state.activityValue + 1));
-
-  } else if (spec.subType === 'kwh') {
-    // Electricity
-    state.activityValue = state.activityValue || spec.defaultVal;
-    elements.followupContainer.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <label for="input-elec-kwh" class="fl" style="margin-bottom:0">Electricity Consumed (kWh)</label>
-        <span class="param-badge" id="elec-badge">${state.activityValue} kWh</span>
-      </div>
-      <input type="number" id="input-elec-kwh" class="fi fi--center" min="1" max="1000" value="${state.activityValue}" style="margin-bottom:8px;">
-      <p class="param-hint">India CEA CO&#8322; Baseline v19 · 0.716 kg CO&#8322;e / kWh</p>
-    `;
-
-    const input = document.getElementById('input-elec-kwh');
-    const badge = document.getElementById('elec-badge');
+  // Bind numeric inputs
+  elements.followupContainer.querySelectorAll('.act-input-val').forEach(input => {
     input.addEventListener('input', (e) => {
-      const val = Math.max(1, Number(e.target.value) || 0);
-      state.activityValue = val;
-      badge.textContent = `${val} kWh`;
-      if (state.isCalculated) calculateAndRender(false);
+      const actKey = input.dataset.act;
+      const spec = ACTIVITY_SPECS[actKey];
+      const val = Math.max(spec.min, Math.min(spec.max, Number(e.target.value) || spec.min));
+      state.activities[actKey] = val;
+      const card = input.closest('.act-card');
+      if (card) {
+        const itemCalc = calculateActivityEmissions(actKey, val);
+        const impactElem = card.querySelector('.act-card__impact');
+        if (impactElem) impactElem.textContent = `+${itemCalc.emissions.toFixed(2)} kg CO₂e`;
+      }
+      calculateAndRender(false);
     });
+  });
 
-  } else if (spec.subType === 'meals') {
-    // Meat meals
-    state.activityValue = state.activityValue || spec.defaultVal;
-    elements.followupContainer.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <label for="input-meat-meals" class="fl" style="margin-bottom:0">Meat-Based Meals</label>
-        <span class="param-badge" id="meals-badge">${state.activityValue} meal(s)</span>
-      </div>
-      <div class="param-stepper">
-        <button type="button" class="stp-btn" id="meal-minus">-1</button>
-        <input type="number" id="input-meat-meals" class="fi fi--center" min="1" max="10" value="${state.activityValue}">
-        <button type="button" class="stp-btn" id="meal-plus">+1</button>
-      </div>
-      <p class="param-hint">WRI / Poore &amp; Nemecek Science LCA · 2.40 kg CO&#8322;e / portion</p>
-    `;
+  // Bind minus stepper
+  elements.followupContainer.querySelectorAll('.act-minus-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const actKey = btn.dataset.act;
+      const spec = ACTIVITY_SPECS[actKey];
+      const step = spec.step || 1;
+      const current = Number(state.activities[actKey]) || spec.defaultVal;
+      const nextVal = Math.max(spec.min, current - step);
+      state.activities[actKey] = nextVal;
+      renderActiveFollowups();
+      calculateAndRender(false);
+    });
+  });
 
-    const input = document.getElementById('input-meat-meals');
-    const badge = document.getElementById('meals-badge');
-    const minus = document.getElementById('meal-minus');
-    const plus = document.getElementById('meal-plus');
+  // Bind plus stepper
+  elements.followupContainer.querySelectorAll('.act-plus-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const actKey = btn.dataset.act;
+      const spec = ACTIVITY_SPECS[actKey];
+      const step = spec.step || 1;
+      const current = Number(state.activities[actKey]) || spec.defaultVal;
+      const nextVal = Math.min(spec.max, current + step);
+      state.activities[actKey] = nextVal;
+      renderActiveFollowups();
+      calculateAndRender(false);
+    });
+  });
 
-    const updateMeal = (val) => {
-      const clamped = Math.max(1, Math.min(10, Number(val) || 1));
-      state.activityValue = clamped;
-      input.value = clamped;
-      badge.textContent = `${clamped} meal(s)`;
-      if (state.isCalculated) calculateAndRender(false);
-    };
-
-    input.addEventListener('input', (e) => updateMeal(e.target.value));
-    minus.addEventListener('click', () => updateMeal(state.activityValue - 1));
-    plus.addEventListener('click', () => updateMeal(state.activityValue + 1));
-
-  } else if (spec.subType === 'category') {
-    // Shopping
-    state.activityValue = state.activityValue || spec.defaultVal;
-    const optionsHtml = spec.options.map(opt => `
-      <option value="${opt.value}" ${opt.value === state.activityValue ? 'selected' : ''}>
-        ${opt.label} (~${opt.factor} kg CO&#8322;e)
-      </option>
-    `).join('');
-
-    elements.followupContainer.innerHTML = `
-      <label for="select-shopping-cat" class="fl" style="margin-bottom:8px">Procurement Category</label>
-      <select id="select-shopping-cat" class="fi fi--select" style="margin-bottom:8px">
-        ${optionsHtml}
-      </select>
-      <p class="param-hint">Lifecycle embodied procurement carbon benchmark</p>
-    `;
-
-    const select = document.getElementById('select-shopping-cat');
+  // Bind select
+  elements.followupContainer.querySelectorAll('.act-select-val').forEach(select => {
     select.addEventListener('change', (e) => {
-      state.activityValue = e.target.value;
-      if (state.isCalculated) calculateAndRender(false);
+      const actKey = select.dataset.act;
+      state.activities[actKey] = e.target.value;
+      renderActiveFollowups();
+      calculateAndRender(false);
     });
-  }
+  });
 }
 
 /**
@@ -533,15 +531,16 @@ function revealAndScrollToImpact() {
  */
 function calculateAndRender(shouldAnimate = false) {
   const travel = calculateTravelEmissions(state.mode, state.distance, state.passengers);
-  const activity = calculateActivityEmissions(state.activity, state.activityValue);
+  const activity = calculateMultipleActivities(state.activities);
   
   const totalFootprint = Number((travel.perPersonEmissions + activity.emissions).toFixed(2));
   const altAnalysis = getAlternativeRecommendations(state.mode, state.distance, state.passengers);
+  const primaryActivity = Object.keys(state.activities)[0] || 'None';
   const recMessage = generatePersonalizedRecommendation(
     state.mode, 
     state.distance, 
     state.passengers, 
-    state.activity, 
+    primaryActivity, 
     totalFootprint
   );
 
@@ -622,10 +621,13 @@ function calculateAndRender(shouldAnimate = false) {
   }
   elements.journeyFactorPill.textContent = `${travel.factor} ${travel.unit}`;
 
-  // Activity breakdown
+  // Activity breakdown (Multi-Activity Support)
   elements.activityEmissionsVal.textContent = activity.emissions.toFixed(2);
-  elements.activityDetailsText.textContent = state.activity === 'None' ? 'None selected' : activity.description;
-  elements.activityFactorPill.textContent = state.activity === 'None' ? 'Baseline: 0.00 kg' : `${activity.factor} ${activity.unit}`;
+  const activeCount = Object.keys(state.activities).length;
+  elements.activityDetailsText.textContent = activeCount === 0 ? 'None selected' : activity.description;
+  elements.activityFactorPill.textContent = activeCount === 0 
+    ? 'Baseline: 0.00 kg' 
+    : `${activeCount} activity (${activity.emissions.toFixed(2)} kg CO₂e)`;
 
   // Render Alternatives
   renderAlternatives(altAnalysis.recommendations, travel.perPersonEmissions);
@@ -894,8 +896,7 @@ function resetCalculator() {
   state.mode = "Petrol Car";
   state.distance = 32;
   state.passengers = 1;
-  state.activity = "None";
-  state.activityValue = null;
+  state.activities = {};
   state.isCalculated = false;
 
   elements.originInput.value = state.origin;
@@ -904,13 +905,20 @@ function resetCalculator() {
   elements.distanceInput.value = state.distance;
   elements.distanceSlider.value = state.distance;
   elements.passengersInput.value = state.passengers;
-  elements.activitySelect.value = state.activity;
+
+  if (elements.activityChipsContainer) {
+    elements.activityChipsContainer.querySelectorAll('.act-chip').forEach(c => {
+      c.classList.remove('act-chip--on');
+      const b = c.querySelector('.act-chip__state');
+      if (b) b.textContent = '+';
+    });
+  }
+  renderActiveFollowups();
 
   updateKmButtonsActive(32);
   syncTransportCards();
   updateDistanceDisplays();
   updatePassengerDisplays();
-  updateFollowupInput();
 
   if (elements.impactSection) elements.impactSection.classList.add('hidden');
   if (elements.choicesSection) elements.choicesSection.classList.add('hidden');

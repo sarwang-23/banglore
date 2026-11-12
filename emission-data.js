@@ -236,6 +236,53 @@ export function calculateActivityEmissions(activityKey, inputVal) {
 }
 
 /**
+ * Calculates emissions for multiple concurrent supplementary activities
+ * @param {Object} activitiesMap - Map of activityKey -> inputVal
+ */
+export function calculateMultipleActivities(activitiesMap = {}) {
+  const keys = Object.keys(activitiesMap).filter(k => k && k !== 'None');
+  if (keys.length === 0) {
+    return {
+      emissions: 0,
+      description: 'None selected',
+      items: [],
+      factor: 0,
+      unit: 'kg CO₂e'
+    };
+  }
+
+  let totalEmissions = 0;
+  const items = [];
+
+  for (const key of keys) {
+    const val = activitiesMap[key];
+    const itemCalc = calculateActivityEmissions(key, val);
+    if (itemCalc.emissions > 0) {
+      totalEmissions += itemCalc.emissions;
+      items.push({
+        key,
+        emissions: itemCalc.emissions,
+        description: itemCalc.description,
+        factor: itemCalc.factor,
+        unit: itemCalc.unit
+      });
+    }
+  }
+
+  const desc = items.length === 1 
+    ? items[0].description 
+    : `${items.length} activities: ` + items.map(i => `${i.key.replace(' Usage', '').replace(' Consumption', '')} (${i.emissions.toFixed(2)} kg)`).join(' · ');
+
+  return {
+    emissions: Number(totalEmissions.toFixed(2)),
+    description: desc,
+    items,
+    factor: totalEmissions,
+    unit: 'kg CO₂e'
+  };
+}
+
+/**
  * Alternative recommendation engine
  * Evaluates transport alternatives for the same distance and passenger count.
  * Returns up to 3 lower-emission alternatives with strictly calculated savings.
